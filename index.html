@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GODIVA Neutronics Simulation</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans">
+  <header class="bg-blue-900 text-white p-6">
+    <h1 class="text-3xl font-bold">GODIVA Sphere Neutronics Simulation</h1>
+    <p class="mt-2 text-lg">Validation of a Monte Carlo Model for Fast Spectrum Criticality</p>
+  </header>
+
+  <main class="max-w-4xl mx-auto py-10 px-4 space-y-10">
+    <section id="introduction">
+      <h2 class="text-2xl font-semibold mb-2">Introduction</h2>
+      <p>This project models and analyzes the GODIVA critical assembly – a bare sphere of highly enriched uranium (HEU) – using OpenMC with the ENDF/B-VIII.0 nuclear data library. GODIVA is a well-documented benchmark used to validate neutronics codes and nuclear data in fast spectrum criticality scenarios.</p>
+      <p>The objective is to reproduce the benchmark effective multiplication factor (keff), compare results against trusted MCNP6.2 simulations, and analyze neutron flux distributions.</p>
+    </section>
+
+    <section id="methodology">
+      <h2 class="text-2xl font-semibold mb-2">Methodology</h2>
+
+      <h3 class="text-xl font-medium mt-4">Geometry</h3>
+      <p>The GODIVA assembly is modeled as a bare sphere of HEU, with radius 8.741 cm.</p>
+
+      <h3 class="text-xl font-medium mt-4">Material Composition</h3>
+      <ul class="list-disc list-inside">
+        <li>94.73 at% U-235</li>
+        <li>5.27 at% U-238</li>
+        <li>Density: 18.74 g/cm<sup>3</sup></li>
+      </ul>
+
+      <h3 class="text-xl font-medium mt-4">Simulation Parameters</h3>
+      <p>OpenMC k-eigenvalue setup with 10k particles, 10 inactive and 110 active cycles. A monoenergetic and then Watt-distributed neutron source were used. Shannon entropy was used for convergence verification.</p>
+    </section>
+
+    <section id="results">
+      <h2 class="text-2xl font-semibold mb-2">Results</h2>
+      <table class="table-auto w-full border border-gray-400">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="border px-4 py-2">Source</th>
+            <th class="border px-4 py-2">keff</th>
+            <th class="border px-4 py-2">Std Dev</th>
+            <th class="border px-4 py-2">95% CI</th>
+            <th class="border px-4 py-2">z-test</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="border px-4 py-2">Benchmark</td>
+            <td class="border px-4 py-2">1.0000</td>
+            <td class="border px-4 py-2">0.0010</td>
+            <td class="border px-4 py-2">0.99905 – 1.00095</td>
+            <td class="border px-4 py-2">-</td>
+          </tr>
+          <tr>
+            <td class="border px-4 py-2">LANL (MCNP6.2)</td>
+            <td class="border px-4 py-2">0.9999</td>
+            <td class="border px-4 py-2">0.0002</td>
+            <td class="border px-4 py-2">0.99971 – 1.00009</td>
+            <td class="border px-4 py-2">0.098</td>
+          </tr>
+          <tr>
+            <td class="border px-4 py-2">OpenMC</td>
+            <td class="border px-4 py-2">1.00110</td>
+            <td class="border px-4 py-2">0.00064</td>
+            <td class="border px-4 py-2">1.00049 – 1.00171</td>
+            <td class="border px-4 py-2">0.926</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="improvements">
+      <h2 class="text-2xl font-semibold mb-2">Improvements</h2>
+      <p>Increasing particles per cycle to 100k improved precision, with final keff = 1.00096 ± 0.00023. A gradient source model was explored, though not necessary given convergence results.</p>
+    </section>
+
+    <section id="references">
+      <h2 class="text-2xl font-semibold mb-2">References</h2>
+      <ol class="list-decimal list-inside space-y-1">
+        <li>Fission Neutron - an overview | ScienceDirect Topics</li>
+        <li><a href="https://mcnp.lanl.gov/pdf_files/TechReport_2019_LANL_LA-UR-19-23348_AlwinBrownEtAl.pdf" class="text-blue-700 underline">LANL Report LA-UR-19-23348</a></li>
+        <li>ICSBEP Benchmark Handbook</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="text-center text-sm text-gray-600 py-4">
+    &copy; 2025 Your Name. All rights reserved.
+  </footer>
+</body>
+</html>
