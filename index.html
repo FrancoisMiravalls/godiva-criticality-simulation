@@ -6,23 +6,23 @@
   <title>GODIVA Neutronics Simulation</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-60 text-gray-900 font-sans">
+<body class="bg-gray-75 text-gray-900 font-sans">
   <header class="bg-blue-900 text-white p-6">
     <h1 class="text-3xl font-bold">GODIVA Sphere Neutronics Simulation</h1>
     <p class="mt-2 text-lg">Validation of a Monte Carlo Model for Fast Spectrum Criticality</p>
   </header>
 
-  <main class="max-w-4xl mx-auto py-10 px-4 space-y-10">
+  <main class="max-w-4xl mx-auto py-10 px-4 space-y-10 text-justify">
     <section id="introduction">
       <h2 class="text-2xl font-semibold mb-2">Introduction</h2>
       <p class="mb-2">This project models and analyzes the GODIVA critical assembly – a bare sphere of highly enriched uranium (HEU) – using OpenMC with the ENDF/B-VIII.0 nuclear data library. GODIVA is a well-documented benchmark used to validate neutronics codes and nuclear data in fast spectrum criticality scenarios.</p>
-      <p class="mb-2">The objective is to reproduce the benchmark effective multiplication factor (keff), compare results against trusted MCNP6 simulations, and analyze neutron flux distributions. This provides a practical validation of both OpenMC's simulation fidelity and the ENDF/B-VIII.0 nuclear data in a fast-spectrum system.</p>
+      <p class="mb-2">The objective is to reproduce the benchmark effective multiplication factor (keff), compare results against trusted MCNP6.2 simulations, and analyze neutron flux distributions. This provides a practical validation of both OpenMC's simulation fidelity and the ENDF/B-VIII.0 nuclear data in a fast-spectrum system.</p>
       <p class="mb-2">The project serves as a foundational step toward deeper engagement with nuclear simulation, numerical transport methods, and validation workflows.</p>
     </section>
 
     <section id="methodology">
       <h2 class="text-2xl font-semibold mb-2">Methodology</h2>
-      <p>This simulation models the GODIVA critical assembly as described in Los Alamos National Laboratory's MCNP6 validation report [1]. To ensure comparability, the model reproduces the geometry, material composition, and simulation parameters used in that report, while implementing them in OpenMC.</p>
+      <p>This simulation models the GODIVA critical assembly as described in Los Alamos National Laboratory's MCNP6.2 validation report <a href="#ref1" class="text-blue-600">[1]</a>. To ensure comparability, the model reproduces the geometry, material composition, and simulation parameters used in that report, while implementing them in OpenMC.</p>
 
       <h3 class="text-xl font-medium mt-4">Geometry</h3>
       <p class="mb-2">The GODIVA assembly is modeled as a bare sphere of HEU, with radius 8.741 cm centered at the origin.</p>
@@ -48,7 +48,7 @@
       </ul>
       <p class="mb-2">However, since OpenMC does not inherit source energy distributions automatically, an explicit source energy distribution must be defined.</p>
       <p class="mb-2">To investigate which source distribution would be appropriate and converge in time for the end of the inactive cycles, I implemented an energy-dependent neutron flux tally using OpenMC's tracklength estimator and a fine energy grid from 0 to 5 MeV (200 bins). I then automated a script to run successive cycles reusing the previous run’s source file as the starting point, which allowed me to track the evolution of the neutron energy spectrum over simulation batches.</p>
-      <p class="mb-2">A monoenergetic 1MeV neutron source was chosen as a simplistic initial guess because it lies between the most probable energy of fission neutrons emitted from U-235 (~0.7 MeV), and the average energy (~2 MeV) [2]. While oversimplified, a monoenergetic source provides a controlled baseline to understand how the spectrum evolves from a non-equilibrium shape.</p>
+      <p class="mb-2">A monoenergetic 1MeV neutron source was chosen as a simplistic initial guess because it lies between the most probable energy of fission neutrons emitted from U-235 (~0.7 MeV), and the average energy (~2 MeV) <a href="#ref2" class="text-blue-600">[2]</a>. While oversimplified, a monoenergetic source provides a controlled baseline to understand how the spectrum evolves from a non-equilibrium shape.</p>
       <img src="images/point_source.png" alt="Monoenergetic neutron source" class="my-6 mx-auto">
 
       <p class="mb-2">To more realistically emulate the physics of neutron emission from fission, I then opted for a Watt-distributed energy source using parameters a = 0.988e6 eV, b = 2.249e-6 eV^-1.</p>
@@ -81,14 +81,14 @@
         </thead>
         <tbody>
           <tr>
-            <td class="border px-4 py-2">Experimental Benchmark [1]</td>
+            <td class="border px-4 py-2">Experimental Benchmark <a href="#ref3" class="text-blue-600">[3]</a></td>
             <td class="border px-4 py-2">1.0000</td>
             <td class="border px-4 py-2">0.0010</td>
             <td class="border px-4 py-2">0.99905 – 1.00095</td>
             <td class="border px-4 py-2">-</td>
           </tr>
           <tr>
-            <td class="border px-4 py-2">LANL (MCNP6)</td>
+            <td class="border px-4 py-2">LANL (MCNP6.2)</td>
             <td class="border px-4 py-2">0.9999</td>
             <td class="border px-4 py-2">0.0002</td>
             <td class="border px-4 py-2">0.99971 – 1.00009</td>
@@ -103,7 +103,7 @@
           </tr>
         </tbody>
       </table>
-      <p class="mb-4">The OpenMC result demonstrates good agreement with the experimental benchmark, with a z-score < 1.96 indicating no statistically significant difference at the 95% confidence level. LANL's MCNP6 result agrees even more closely (z = 0.098), suggesting excellent consistency with the benchmark.</p>
+      <p class="mb-4">The OpenMC result demonstrates good agreement with the experimental benchmark, with a z-score < 1.96 indicating no statistically significant difference at the 95% confidence level. LANL's MCNP6.2 result agrees even more closely (z = 0.098), suggesting excellent consistency with the benchmark.</p>
       <p class="mb-2">The slightly better performance of MCNP may be attributed to its ability to initialize simulations with an estimated keff value, potentially enhancing convergence and statistical precision.</p>
     </section>
 
@@ -117,9 +117,9 @@
     <section id="references">
       <h2 class="text-2xl font-semibold mb-2">References</h2>
       <ol class="list-disc list-inside space-y-1">
-        <li><a href="https://mcnp.lanl.gov/pdf_files/TechReport_2019_LANL_LA-UR-19-23348_AlwinBrownEtAl.pdf" class="text-blue-700 underline">LANL Report LA-UR-19-23348</a></li>
-        <li><a href="https://www.sciencedirect.com/topics/mathematics/fission-neutron?" class="text-blue-700 underline">Fission Neutron - an overview | ScienceDirect Topics</a></li>
-        <li>ICSBEP Benchmark Handbook</li>
+        <li id="ref1"><a href="https://mcnp.lanl.gov/pdf_files/TechReport_2019_LANL_LA-UR-19-23348_AlwinBrownEtAl.pdf" class="text-blue-700 underline">LANL Report LA-UR-19-23348</a></li>
+        <li id="ref2"><a href="https://www.sciencedirect.com/topics/mathematics/fission-neutron?" class="text-blue-700 underline">Fission Neutron - an overview | ScienceDirect Topics</a></li>
+        <li id="ref3">ICSBEP Benchmark Handbook</li>
       </ol>
     </section>
   </main>
