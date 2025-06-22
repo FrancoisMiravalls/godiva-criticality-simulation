@@ -26,7 +26,7 @@
 
       <h3 class="text-xl font-medium mt-4">Geometry</h3>
       <p class="mb-2">The GODIVA assembly is modeled as a bare sphere of HEU, with radius 8.741 cm centered at the origin.</p>
-      <img src="assets/geometry.png" alt="OpenMC model geometry" class="my-6 mx-auto">
+      <img src="images/geometry.png" alt="OpenMC model geometry" class="my-6 mx-auto">
 
       <h3 class="text-xl font-medium mt-4">Material Composition</h3>
       <p class="mb-2">The fuel is modeled as uniform highly enriched uranium (HEU) with the same atomic composition reported in the LANL study:</p>
@@ -49,20 +49,20 @@
       <p class="mb-2">However, since OpenMC does not inherit source energy distributions automatically, an explicit source energy distribution must be defined.</p>
       <p class="mb-2">To investigate which source distribution would be appropriate and converge in time for the end of the inactive cycles, I implemented an energy-dependent neutron flux tally using OpenMC's tracklength estimator and a fine energy grid from 0 to 5 MeV (200 bins). I then automated a script to run successive cycles reusing the previous run’s source file as the starting point, which allowed me to track the evolution of the neutron energy spectrum over simulation batches.</p>
       <p class="mb-2">A monoenergetic 1MeV neutron source was chosen as a simplistic initial guess because it lies between the most probable energy of fission neutrons emitted from U-235 (~0.7 MeV), and the average energy (~2 MeV) [2]. While oversimplified, a monoenergetic source provides a controlled baseline to understand how the spectrum evolves from a non-equilibrium shape.</p>
-      <img src="assets/point_source.png" alt="Monoenergetic neutron source" class="my-6 mx-auto">
+      <img src="images/point_source.png" alt="Monoenergetic neutron source" class="my-6 mx-auto">
 
       <p class="mb-2">To more realistically emulate the physics of neutron emission from fission, I then opted for a Watt-distributed energy source using parameters a = 0.988e6 eV, b = 2.249e-6 eV^-1.</p>
-      <img src="assets/watt_source.png" alt="Watt-distributed neutron source" class="my-6 mx-auto">
+      <img src="images/watt_source.png" alt="Watt-distributed neutron source" class="my-6 mx-auto">
 
       <p class="mb-2">Although both source distributions converge within the designated 10 inactive batches, the Watt distribution aligned with the final equilibrium spectrum faster, as expected.</p>
       
       <p class="mb-2">The final converged spectrum exhibits the expected qualitative shape—resembling a Watt-like distribution—but peaks below 0.7 MeV. This is consistent with the nature of the flux tally: it reflects the equilibrium neutron flux rather than the neutron production spectrum. As neutrons scatter, they gradually lose energy. This down-scattering leads to a buildup of neutron population at lower energies.</p>
 
       <p class="mb-2">To inspect the convergence of the neutron source distribution, a Shannon entropy mesh was implemented. At each cycle, OpenMC calculates the entropy of the fission source distribution within this mesh. A plateau in the entropy values indicates that the spatial distribution of the source has stabilized.</p>
-      <img src="assets/entropy.png" alt="Shannon entropy convergence" class="my-6 mx-auto">
+      <img src="images/entropy.png" alt="Shannon entropy convergence" class="my-6 mx-auto">
 
       <p class="mb-2">Similarly, k_eff was monitored across batches to confirm convergence.</p>
-      <img src="assets/keff.png" alt="k_eff convergence" class="my-6 mx-auto">
+      <img src="images/keff.png" alt="k_eff convergence" class="my-6 mx-auto">
 
       <p class="mb-2">The stabilization of k_eff near 1.0, along with the plateau observed in the entropy plot, provides strong evidence that the system reached equilibrium during the inactive cycles, thereby reinforcing confidence in the simulation settings.</p>
     </section>
@@ -103,7 +103,7 @@
           </tr>
         </tbody>
       </table>
-      <p class="mb-2">The OpenMC result demonstrates good agreement with the experimental benchmark, with a z-score < 1.96 indicating no statistically significant difference at the 95% confidence level. LANL's MCNP6 result agrees even more closely (z = 0.098), suggesting excellent consistency with the benchmark.</p>
+      <p class="mb-4">The OpenMC result demonstrates good agreement with the experimental benchmark, with a z-score < 1.96 indicating no statistically significant difference at the 95% confidence level. LANL's MCNP6 result agrees even more closely (z = 0.098), suggesting excellent consistency with the benchmark.</p>
       <p class="mb-2">The slightly better performance of MCNP may be attributed to its ability to initialize simulations with an estimated keff value, potentially enhancing convergence and statistical precision.</p>
     </section>
 
@@ -124,8 +124,6 @@
     </section>
   </main>
 
-  <footer class="text-center text-sm text-gray-600 py-4">
-    &copy; Francois Miravalls. linkedIn.
-  </footer>
+  <footer class="text-center text-sm text-gray-600 py-4">Francois Miravalls. linkedIn.</footer>
 </body>
 </html>
