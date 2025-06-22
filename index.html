@@ -6,7 +6,7 @@
   <title>GODIVA Neutronics Simulation</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans">
+<body class="bg-gray-60 text-gray-900 font-sans">
   <header class="bg-blue-900 text-white p-6">
     <h1 class="text-3xl font-bold">GODIVA Sphere Neutronics Simulation</h1>
     <p class="mt-2 text-lg">Validation of a Monte Carlo Model for Fast Spectrum Criticality</p>
@@ -15,9 +15,9 @@
   <main class="max-w-4xl mx-auto py-10 px-4 space-y-10">
     <section id="introduction">
       <h2 class="text-2xl font-semibold mb-2">Introduction</h2>
-      <p>This project models and analyzes the GODIVA critical assembly – a bare sphere of highly enriched uranium (HEU) – using OpenMC with the ENDF/B-VIII.0 nuclear data library. GODIVA is a well-documented benchmark used to validate neutronics codes and nuclear data in fast spectrum criticality scenarios.</p>
-      <p>The objective is to reproduce the benchmark effective multiplication factor (keff), compare results against trusted MCNP6 simulations, and analyze neutron flux distributions. This provides a practical validation of both OpenMC's simulation fidelity and the ENDF/B-VIII.0 nuclear data in a fast-spectrum system.</p>
-      <p>The project serves as a foundational step toward deeper engagement with nuclear simulation, numerical transport methods, and validation workflows.</p>
+      <p class="mb-2">This project models and analyzes the GODIVA critical assembly – a bare sphere of highly enriched uranium (HEU) – using OpenMC with the ENDF/B-VIII.0 nuclear data library. GODIVA is a well-documented benchmark used to validate neutronics codes and nuclear data in fast spectrum criticality scenarios.</p>
+      <p class="mb-2">The objective is to reproduce the benchmark effective multiplication factor (keff), compare results against trusted MCNP6 simulations, and analyze neutron flux distributions. This provides a practical validation of both OpenMC's simulation fidelity and the ENDF/B-VIII.0 nuclear data in a fast-spectrum system.</p>
+      <p class="mb-2">The project serves as a foundational step toward deeper engagement with nuclear simulation, numerical transport methods, and validation workflows.</p>
     </section>
 
     <section id="methodology">
@@ -25,42 +25,50 @@
       <p>This simulation models the GODIVA critical assembly as described in Los Alamos National Laboratory's MCNP6 validation report [1]. To ensure comparability, the model reproduces the geometry, material composition, and simulation parameters used in that report, while implementing them in OpenMC.</p>
 
       <h3 class="text-xl font-medium mt-4">Geometry</h3>
-      <p>The GODIVA assembly is modeled as a bare sphere of HEU, with radius 8.741 cm centered at the origin.</p>
+      <p class="mb-2">The GODIVA assembly is modeled as a bare sphere of HEU, with radius 8.741 cm centered at the origin.</p>
+      <img src="assets/geometry.png" alt="OpenMC model geometry" class="my-6 mx-auto">
 
       <h3 class="text-xl font-medium mt-4">Material Composition</h3>
-      <p>The fuel is modeled as uniform highly enriched uranium (HEU) with the same atomic composition reported in the LANL study:</p>
-      <ul class="list-disc list-inside">
+      <p class="mb-2">The fuel is modeled as uniform highly enriched uranium (HEU) with the same atomic composition reported in the LANL study:</p>
+      <ul class="list-disc list-inside mb-2">
         <li>94.73 at% U-235</li>
         <li>5.27 at% U-238</li>
         <li>Density: 18.74 g/cm<sup>3</sup></li>
       </ul>
       <p>All isotopic data are drawn from the ENDF/B-VIII.0 library, matching the version used in LANL’s "explicit ENDF/B-VIII.0" MCNP simulation.</p>
 
-      <h3 class="text-xl font-medium mt-4">Simulation Parameters</h3>
-      <p>The OpenMC simulation mimics LANL's MCNP kcode setup:</p>
-      <p>k-eigenvalue simulation criticality mode</p>
-      <p>10k particles per cycle</p>
-      <p>10 inactive cycles for source convergence</p>
-      <p>110 active cycles</p>
-      <p>Point source at the sphere’s center</p>
-      <p>However, since OpenMC does not inherit source energy distributions automatically, an explicit source energy distribution must be defined.</p>
-      <p>To investigate which source distribution would be appropriate and converge in time for the end of the inactive cycles, I implemented an energy-dependent neutron flux tally using OpenMC's tracklength estimator and a fine energy grid from 0 to 5 MeV (200 bins). I then automated a script to run successive cycles reusing the previous run’s source file as the starting point, which allowed me to track the evolution of the neutron energy spectrum over simulation batches.</p>
-      <p>A monoenergetic 1MeV neutron source was chosen as a simplistic initial guess because it lies between the most probable energy of fission neutrons emitted from U-235 (~0.7 MeV), and the average energy (~2 MeV) [2]. While oversimplified, a monoenergetic source provides a controlled baseline to understand how the spectrum evolves from a non-equilibrium shape.</p>
-      <!-- add point_source.png -->
-      <p>To more realistically emulate the physics of neutron emission from fission, I then opted for a Watt-distributed energy source using parameters a = 0.988e6 eV, b = 2.249e-6 eV^-1.</p>
-      <watt_source class="png"></watt_source>
-      <p>Although both source distributions converge within the designated 10 inactive batches, the Watt distribution aligned with the final equilibrium spectrum faster, as expected.</p>
-      <p>The final converged spectrum exhibits the expected qualitative shape—resembling a Watt-like distribution—but peaks below 0.7 MeV. This is consistent with the nature of the flux tally: it reflects the equilibrium neutron flux rather than the neutron production spectrum. As neutrons scatter, they gradually lose energy. This down-scattering leads to a buildup of neutron population at lower energies.</p>
-      <!-- add space -->
-      <p>To inspect the convergence of the neutron source distribution, a Shannon entropy mesh was implemented. At each cycle, OpenMC calculates the entropy of the fission source distribution within this mesh. A plateau in the entropy values indicates that the spatial distribution of the source has stabilized.</p>
-      <!-- entropy.png -->
-      <p>Similarly, k_eff was monitored across batches to confirm convergence.</p>
-      <!-- keff.png -->
-      <p>The stabilization of k_eff near 1.0, along with the plateau observed in the entropy plot, provides strong evidence that the system reached equilibrium during the inactive cycles, thereby reinforcing confidence in the simulation settings.</p>
+      <h3 class="text-xl font-medium mt-4 mb-2">Simulation Parameters</h3>
+      <p class="mb-2">The OpenMC simulation mimics LANL's MCNP kcode setup:</p>
+      <ul class="list-disc list-inside mb-2">
+        <li>k-eigenvalue simulation criticality mode</li>
+        <li>10k particles per cycle</li>
+        <li>10 inactive cycles for source convergence</li>
+        <li>110 active cycles</li>
+        <li>Point source at the sphere’s center</li>
+      </ul>
+      <p class="mb-2">However, since OpenMC does not inherit source energy distributions automatically, an explicit source energy distribution must be defined.</p>
+      <p class="mb-2">To investigate which source distribution would be appropriate and converge in time for the end of the inactive cycles, I implemented an energy-dependent neutron flux tally using OpenMC's tracklength estimator and a fine energy grid from 0 to 5 MeV (200 bins). I then automated a script to run successive cycles reusing the previous run’s source file as the starting point, which allowed me to track the evolution of the neutron energy spectrum over simulation batches.</p>
+      <p class="mb-2">A monoenergetic 1MeV neutron source was chosen as a simplistic initial guess because it lies between the most probable energy of fission neutrons emitted from U-235 (~0.7 MeV), and the average energy (~2 MeV) [2]. While oversimplified, a monoenergetic source provides a controlled baseline to understand how the spectrum evolves from a non-equilibrium shape.</p>
+      <img src="assets/point_source.png" alt="Monoenergetic neutron source" class="my-6 mx-auto">
+
+      <p class="mb-2">To more realistically emulate the physics of neutron emission from fission, I then opted for a Watt-distributed energy source using parameters a = 0.988e6 eV, b = 2.249e-6 eV^-1.</p>
+      <img src="assets/watt_source.png" alt="Watt-distributed neutron source" class="my-6 mx-auto">
+
+      <p class="mb-2">Although both source distributions converge within the designated 10 inactive batches, the Watt distribution aligned with the final equilibrium spectrum faster, as expected.</p>
+      
+      <p class="mb-2">The final converged spectrum exhibits the expected qualitative shape—resembling a Watt-like distribution—but peaks below 0.7 MeV. This is consistent with the nature of the flux tally: it reflects the equilibrium neutron flux rather than the neutron production spectrum. As neutrons scatter, they gradually lose energy. This down-scattering leads to a buildup of neutron population at lower energies.</p>
+
+      <p class="mb-2">To inspect the convergence of the neutron source distribution, a Shannon entropy mesh was implemented. At each cycle, OpenMC calculates the entropy of the fission source distribution within this mesh. A plateau in the entropy values indicates that the spatial distribution of the source has stabilized.</p>
+      <img src="assets/entropy.png" alt="Shannon entropy convergence" class="my-6 mx-auto">
+
+      <p class="mb-2">Similarly, k_eff was monitored across batches to confirm convergence.</p>
+      <img src="assets/keff.png" alt="k_eff convergence" class="my-6 mx-auto">
+
+      <p class="mb-2">The stabilization of k_eff near 1.0, along with the plateau observed in the entropy plot, provides strong evidence that the system reached equilibrium during the inactive cycles, thereby reinforcing confidence in the simulation settings.</p>
     </section>
 
     <section id="results">
-      <h2 class="text-2xl font-semibold mb-2">Results</h2>
+      <h2 class="text-2xl font-semibold mb-4">Results</h2>
       <table class="table-auto w-full border border-gray-400">
         <thead class="bg-gray-200">
           <tr>
@@ -95,29 +103,29 @@
           </tr>
         </tbody>
       </table>
-      <p>The OpenMC result demonstrates good agreement with the experimental benchmark, with a z-score < 1.96 indicating no statistically significant difference at the 95% confidence level. LANL's MCNP6 result agrees even more closely (z = 0.098), suggesting excellent consistency with the benchmark.</p>
-      <p>The slightly better performance of MCNP may be attributed to its ability to initialize simulations with an estimated keff value, potentially enhancing convergence and statistical precision.</p>
+      <p class="mb-2">The OpenMC result demonstrates good agreement with the experimental benchmark, with a z-score < 1.96 indicating no statistically significant difference at the 95% confidence level. LANL's MCNP6 result agrees even more closely (z = 0.098), suggesting excellent consistency with the benchmark.</p>
+      <p class="mb-2">The slightly better performance of MCNP may be attributed to its ability to initialize simulations with an estimated keff value, potentially enhancing convergence and statistical precision.</p>
     </section>
 
     <section id="improvements">
       <h2 class="text-2xl font-semibold mb-2">Improvements</h2>
-      <p>To further improve the precision of the OpenMC simulation results the number of particles per cycle was increased from 10,000 to 100,000. This increase enhances convergence and lowers the Monte Carlo noise, improving result precision without altering model fidelity.</p>
-      <p>Additionally, a more realistic source distribution was considered—specifically, a gradient source model with higher neutron density near the core center and lower density toward the periphery, reflecting the expected fission source profile. However, this seemed redundant considering our confidence in the convergence of the source distribution before the start of the active batches.</p>
-      <p>With the increased number of particles per cycle, the OpenMC simulation produced a refined combined keff value of 1.00096 ± 0.00023. While this result is slightly closer to the benchmark value of 1.0000, the reduced statistical uncertainty leads to a slightly higher z-score of 0.936. Nonetheless, the result remains well within the 95% confidence interval (∣z∣< 1.96), confirming good agreement with the experimental benchmark, despite a statistically significant difference to the MCNP results.</p>
+      <p class="mb-2">To further improve the precision of the OpenMC simulation results the number of particles per cycle was increased from 10,000 to 100,000. This increase enhances convergence and lowers the Monte Carlo noise, improving result precision without altering model fidelity.</p>
+      <p class="mb-2">Additionally, a more realistic source distribution was considered—specifically, a gradient source model with higher neutron density near the core center and lower density toward the periphery, reflecting the expected fission source profile. However, this seemed redundant considering our confidence in the convergence of the source distribution before the start of the active batches.</p>
+      <p class="mb-2">With the increased number of particles per cycle, the OpenMC simulation produced a refined combined keff value of 1.00096 ± 0.00023. While this result is slightly closer to the benchmark value of 1.0000, the reduced statistical uncertainty leads to a slightly higher z-score of 0.936. Nonetheless, the result remains well within the 95% confidence interval (∣z∣< 1.96), confirming good agreement with the experimental benchmark, despite a statistically significant difference to the MCNP results.</p>
     </section>
 
     <section id="references">
       <h2 class="text-2xl font-semibold mb-2">References</h2>
-      <ol class="list-decimal list-inside space-y-1">
+      <ol class="list-disc list-inside space-y-1">
         <li><a href="https://mcnp.lanl.gov/pdf_files/TechReport_2019_LANL_LA-UR-19-23348_AlwinBrownEtAl.pdf" class="text-blue-700 underline">LANL Report LA-UR-19-23348</a></li>
-        <li>Fission Neutron - an overview | ScienceDirect Topics</li>
+        <li><a href="https://www.sciencedirect.com/topics/mathematics/fission-neutron?" class="text-blue-700 underline">Fission Neutron - an overview | ScienceDirect Topics</a></li>
         <li>ICSBEP Benchmark Handbook</li>
       </ol>
     </section>
   </main>
 
   <footer class="text-center text-sm text-gray-600 py-4">
-    &copy; 2025 Your Name. All rights reserved.
+    &copy; Francois Miravalls. linkedIn.
   </footer>
 </body>
 </html>
